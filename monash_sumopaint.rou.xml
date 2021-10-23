@@ -1,0 +1,12 @@
+<routes>
+	<vType id="CarA" guiShape="passenger" /> <!-- vehicle of interest -->
+
+	<route id="route66" edges="4361221#0 4361221#1 4361221#2 4361221#4 4361221#5 204241148#0 204241148#1 49897543 5094886#3 45897403#0 45897403#1 45897403#2 45897403#3 45897403#4 45897403#5 5094891#3 5094891#4 5094891#5
+							   5094893#0 5094893#1 " /> <!-- vehicle of interest driving in a continuous
+							   loop x 10 -->
+								 <route id="route22" edges="573304465 573304461" />
+
+	<!-- period of investigation is from 15:00 -->
+	<vehicle depart="54000" id="veh66" route="route22" type="CarA" />
+
+</routes>
