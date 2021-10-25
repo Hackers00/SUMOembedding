@@ -4,6 +4,22 @@ Michael Hackwill
 edited 20/10/2021
  */
 
+/*
+        Copyright (C) 2017 Google, Inc.
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+ */
+
 package com.google.android.gms.location.sample.locationupdates;
 
 import android.Manifest;
@@ -57,43 +73,23 @@ import java.util.Date;
 import java.util.Locale;
 
 
-/**
- * Using location settings.
- * <p/>
- * Uses the {@link com.google.android.gms.location.SettingsApi} to ensure that the device's system
- * settings are properly configured for the app's location needs. When making a request to
- * Location services, the device's system settings may be in a state that prevents the app from
- * obtaining the location data that it needs. For example, GPS or Wi-Fi scanning may be switched
- * off. The {@code SettingsApi} makes it possible to determine if a device's system settings are
- * adequate for the location request, and to optionally invoke a dialog that allows the user to
- * enable the necessary settings.
- * <p/>
- * This sample allows the user to request location updates using the ACCESS_FINE_LOCATION setting
- * (as specified in AndroidManifest.xml).
- */
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    /**
-     * Code used in requesting runtime permissions.
+    /*
+      Code used in requesting runtime permissions.
      */
-    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 25;
 
-    /**
-     * Constant used in the location settings dialog.
-     */
+
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
 
-    /**
-     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
+    /*
+      The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 800;
-
-    /**
-     * The fastest rate for active location updates. Exact. Updates will never be more frequent
-     * than this value.
-     */
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS ;
 
@@ -102,34 +98,35 @@ public class MainActivity extends AppCompatActivity {
     private final static String KEY_LOCATION = "location";
     private final static String KEY_LAST_UPDATED_TIME_STRING = "last-updated-time-string";
 
-    /**
-     * Provides access to the Fused Location Provider API.
+    /*
+      Provides access to the Fused Location Provider API.
      */
     private FusedLocationProviderClient mFusedLocationClient;
 
-    /**
-     * Provides access to the Location Settings API.
+    /*
+      Provides access to the Location Settings API.
      */
     private SettingsClient mSettingsClient;
 
-    /**
-     * Stores parameters for requests to the FusedLocationProviderApi.
+    /*
+     Stores parameters for requests to the FusedLocationProviderApi.
      */
+
     private LocationRequest mLocationRequest;
 
-    /**
-     * Stores the types of location services the client is interested in using. Used for checking
-     * settings to determine if the device has optimal location settings.
+    /*
+        Stores the types of location services the client is interested in using. Used for checking
+        settings to determine if the device has optimal location settings.
      */
     private LocationSettingsRequest mLocationSettingsRequest;
 
-    /**
-     * Callback for Location events.
+    /*
+     Callback for Location events.
      */
     private LocationCallback mLocationCallback;
 
-    /**
-     * Represents a geographical location.
+    /*
+     Represents a geographical location.
      */
     private Location mCurrentLocation;
 
@@ -152,16 +149,14 @@ public class MainActivity extends AppCompatActivity {
     private BufferedWriter out = null;
     private BufferedReader in = null;
     private Boolean ping = false;
+
+    // Application state
     private int mlocationCase = 0;
 
-    /**
-     * Tracks the status of the location updates request. Value changes when the user presses the
-     * Start Updates and Stop Updates buttons.
-     */
     private Boolean mRequestingLocationUpdates;
 
-    /**
-     * Time when the location was updated represented as a String.
+    /*
+      Time when the location was updated represented as a String.
      */
     private String mLastUpdateTime;
 
@@ -203,11 +198,6 @@ public class MainActivity extends AppCompatActivity {
         buildLocationSettingsRequest();
     }
 
-    /**
-     * Updates fields based on data stored in the bundle.
-     *
-     * @param savedInstanceState The activity state saved in the Bundle.
-     */
     private void updateValuesFromBundle(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             // Update the value of mRequestingLocationUpdates from the Bundle, and make sure that
@@ -233,18 +223,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Sets up the location request. Android has two location request settings:
-     * {@code ACCESS_COARSE_LOCATION} and {@code ACCESS_FINE_LOCATION}. These settings control
-     * the accuracy of the current location. This sample uses ACCESS_FINE_LOCATION, as defined in
-     * the AndroidManifest.xml.
-     * <p/>
-     * When the ACCESS_FINE_LOCATION setting is specified, combined with a fast update
-     * interval (5 seconds), the Fused Location Provider API returns location updates that are
-     * accurate to within a few feet.
-     * <p/>
-     * These settings are appropriate for mapping applications that show real-time location
-     * updates.
+    /*
+     Sets up the location request. Android has two location request settings:
+     ACCESS_COARSE_LOCATION and ACCESS_FINE_LOCATION. These settings control
+     the accuracy of the current location. This sample uses ACCESS_FINE_LOCATION, as defined in
+     the AndroidManifest.xml.
+     When the ACCESS_FINE_LOCATION setting is specified, combined with a fast update
+     interval (1 seconds), the Fused Location Provider API returns location updates.
+     These settings are appropriate for mapping applications that show real-time location
+     updates.
      */
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
@@ -262,8 +249,8 @@ public class MainActivity extends AppCompatActivity {
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    /**
-     * Creates a callback for receiving location events.
+    /*
+      Creates a callback for receiving location events.
      */
     private void createLocationCallback() {
         mLocationCallback = new LocationCallback() {
@@ -278,11 +265,7 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
-    /**
-     * Uses a {@link com.google.android.gms.location.LocationSettingsRequest.Builder} to build
-     * a {@link com.google.android.gms.location.LocationSettingsRequest} that is used for checking
-     * if a device has the needed location settings.
-     */
+
     private void buildLocationSettingsRequest() {
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
@@ -597,6 +580,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public class ConnectTask extends AsyncTask<Void, Void, Boolean> {
+
         protected Boolean doInBackground(Void... params) {
             if (ping == false) {
                 try {
@@ -618,13 +602,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public class SendLocation extends AsyncTask<Void,Void,Void>{
+        /*
+            Asyncronous function to control the location information sent to server
+            Last updated 15/10/21
+         */
         @Override
         protected Void doInBackground(Void... voids) {
+
             String locationstr;
 
             if (ping == true) {
                 try {
+                    // string formatting to create a psuedo data protocol
                     locationstr=String.format("Lat:%.7f,Lng:%.7f,Acc:%.2f,Spd:%.2f,Hdn:%.2f",mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude(),mCurrentLocation.getAccuracy(),mCurrentLocation.getSpeed(),mCurrentLocation.getBearing());
+                    //log string output for debugging and testing purposes
                     Log.d("LOCUP",locationstr);
                     out.write(locationstr);
                     out.flush();
